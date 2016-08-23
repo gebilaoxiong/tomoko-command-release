@@ -27,11 +27,10 @@ exports.init = function(options) {
   }
 
   // source map
-  if (!options.devtool) {
-    options.devtool = 'source-map';
-  }
-
-  tomoko.config.set('build.devtool', 'source-map');
+  // if (options.devtool) {
+  //   options.devtool = 'source-map';
+  //   tomoko.config.set('build.devtool', 'source-map');
+  // }
 
   // 环境变量
   addEnvPlugin();
@@ -61,13 +60,15 @@ exports.run = function(options) {
 /**
  * 添加环境变量插件
  */
-function addEnvPlugin() {
+function addEnvPlugin(env) {
   var plugin;
+
+  env = env || '"dev"';
 
   // 环境变量
   plugin = new webpack.DefinePlugin({
     'process.env': {
-      NODE_ENV: '"dev"'
+      NODE_ENV: env
     }
   });
 
@@ -192,7 +193,7 @@ function printState(status) {
       tags.push(tag);
     });
 
-    log.debug( msg + tags.join(' '));
+    log.debug(msg + tags.join(' '));
   });
 
 

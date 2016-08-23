@@ -22,7 +22,7 @@ var release = exports,
 release.name = 'release';
 
 // 用例
-release.usage = 'tomoko release [options]';
+release.usage = '[options]';
 
 // 描述
 release.description = 'build and deploy your project';
@@ -44,7 +44,9 @@ release.register = function(commander) {
     .option('-f, --file <filename>', 'set tomoko.config file', String, '/tomoko.config.js')
     // 部署路径
     .option('-d, --dest <names>', 'release output destination', String, 'preview')
-    // 部署路径
+    // 项目路径
+    .option('-r, --root <names>', 'set project root', String, process.cwd())
+    // 打印日志明细
     .option('--verbose', 'enable verbose output')
     // 解析回调
     .action(commanderAction);
@@ -65,13 +67,20 @@ function commanderAction() {
   }
 
   // 初始化项目路径
-  project.setProjectRoot(process.cwd());
+  project.setProjectRoot(options.root);
 
   // 读取组件信息
   config.merge(project.readJSON('/component.json'));
 
   // 合并配置
   config.merge(importModule('config', config.get('type')));
+
+
+  cmd = importModule('command', config.get('type'));
+
+  cmd.build.init(options);
+  cmd.deploy.init(options);
+
 
   // 加载项目配置
   if (project.exists(options.file)) {
@@ -83,17 +92,11 @@ function commanderAction() {
     tomoko.Cache.clean('compile');
   }
 
-  cmd = importModule('commander', config.get('type'));
-
-  promise = cmd.build
-    .init(options)
-    .run(options);
+  promise = cmd.build.run(options);
 
   // 执行部署
   promise.then(function() {
-    return cmd.deploy
-      .init(options)
-      .run(options);
+    return cmd.deploy.run(options);
   });
 }
 

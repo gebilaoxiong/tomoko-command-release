@@ -6,6 +6,8 @@
  */
 var pth = require('path'),
 
+  project = tomoko.project,
+
   seajsLibraryTargetPlugin = require('seajs-webpack-plugin'),
 
   loaderFallback;
@@ -19,8 +21,9 @@ loaderFallback = [
   pth.join(require.resolve('css-loader'), '../../'),
   pth.join(require.resolve('style-loader'), '../../'),
   pth.join(require.resolve('baidu-template-loader'), '../../'),
-  pth.join(require.resolve('tomoko-api-proxy-loader'), '../../')
+  pth.join(require.resolve('tomoko-api-loader'), '../../')
 ];
+
 
 
 module.exports = {
@@ -30,12 +33,12 @@ module.exports = {
 
   // 入口
   entry: {
-    'index': './src/index'
+    'index': project.getProjectPath('/src/index')
   },
 
   // 输出
   output: {
-    path: './dist',
+    path: project.getProjectPath('/dist'),
 
     filename: '[name].js',
 
@@ -44,13 +47,15 @@ module.exports = {
 
   module: {
 
-    preLoaders: [{
+    loaders: [{
       // 百度模板引擎解析
       test: /\.tmpl$/,
       loader: 'baidu-template'
-    }],
-
-    loaders: [{
+    }, {
+      // 数据接口api
+      test: /\.js$/,
+      loader: 'tomoko-api'
+    }, {
       // less 解析
       test: /\.less$/,
       loader: 'style!css!less'
