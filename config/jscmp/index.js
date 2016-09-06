@@ -19,7 +19,7 @@ module.exports = {
    * @type {Object}
    */
   project: {
-    
+
     /**
      * 项目包含的文件
      * @type {Array}
@@ -66,10 +66,22 @@ module.exports = {
         release: '/[group]/[name]/[version]/$1/$2'
       },
 
+      // component.json
+      {
+        reg: /^\/component.json$/,
+        release: '/[group]/[name]/[version]/component.json'
+      },
+
       // 依赖的组件
       {
         reg: /^\/components\/([^\/]+)\/([^\/]+)\/([^\/]+)\/(dist|api|examples|doc)\/(.+)$/,
         release: '/$1/$2/$3/$4/$5'
+      },
+
+      // 依赖组件的component.json
+      {
+        reg: /^\/components\/([^\/]+)\/([^\/]+)\/([^\/]+)\/component.json$/,
+        release: '/$1/$2/$3/component.json'
       }
     ]
   },

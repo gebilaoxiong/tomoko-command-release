@@ -25,7 +25,7 @@ release.name = 'release';
 release.usage = '[options]';
 
 // 描述
-release.description = 'build and deploy your project';
+release.description = 'build and deploy your component';
 
 /**
  * 注册命令
