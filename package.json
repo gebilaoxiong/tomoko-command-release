@@ -1,7 +1,7 @@
 {
   "name": "tomoko-command-release",
   "version": "0.0.1",
-  "description": "智子，打包发布命令",
+  "description": "release 命令",
   "main": "release.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
