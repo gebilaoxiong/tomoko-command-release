@@ -4,37 +4,39 @@
  * @date          2016-06-21 11:29:05
  * @description   智子，打包发布
  *                整个release分为两部分 
- *                一部分是资源编译
+ *                一部分是构建(通过管道处理)
  *                一部分是部署
  */
-var release = exports,
-
-  util = tomoko.util,
+var util = tomoko.util,
 
   project = tomoko.project,
 
   config = tomoko.config,
 
-  log = tomoko.log;
+  log = tomoko.log,
+
+  release = require('./lib/release'),
+
+  watch = require('./lib/watch');
 
 
 // 命名名称
-release.name = 'release';
+exports.name = 'release';
 
 // 用例
-release.usage = '[options]';
+exports.usage = '[options]';
 
 // 描述
-release.description = 'build and deploy your component';
+exports.description = 'build and deploy your component';
 
 /**
  * 注册命令
  * @param  {Commander}                    commander                   命令配置
  */
-release.register = function(commander) {
+exports.register = function(commander) {
 
   commander
-  // 清理编译缓存
+    // 清理编译缓存
     .option('-c, --clean', 'clean compile cache')
     // 压缩
     .option('-o, --optimize', 'with optimizing')
@@ -69,20 +71,12 @@ function commanderAction() {
   // 初始化项目路径
   project.setProjectRoot(options.root);
 
-  // 读取组件信息
-  config.merge(project.readJSON('/component.json'));
 
   // 合并配置
-  config.merge(importModule('config', config.get('type')));
+  config.merge(require('./config'));
 
-
-  cmd = importModule('command', config.get('type'));
-
-  cmd.build.init(options);
-  cmd.deploy.init(options);
-
-
-  // 加载项目配置
+  // 加载项目配置文件
+  // tomoko.config.js
   if (project.exists(options.file)) {
     project.require(options.file);
   }
@@ -92,30 +86,10 @@ function commanderAction() {
     tomoko.Cache.clean('compile');
   }
 
-  promise = cmd.build.run(options);
-
-  // 执行部署
-  promise.then(function() {
-    return cmd.deploy.run(options);
-  });
-}
-
-
-/**
- * 加载模块
- * @param  {String}                     moduleName                    模块名称
- * @param  {String}                     cmpType                       组件类型
- */
-function importModule(moduleName, cmpType) {
-  var path, ret;
-
-  path = ['.', moduleName, cmpType].join('/');
-
-  try {
-    ret = require(path);
-  } catch (e) {
-    log.error(e);
+  if (options.watch) {
+    watch(options);
+  } else {
+    release(options);
   }
-
-  return ret;
 }
+

@@ -2,17 +2,11 @@
  * @authors       gebilaoxiong
  * @email         gebilaoxiong@gmail.com
  * @date          2016-08-10 16:50:25
- * @description   部署配置
+ * @description   配置文件
  */
 
 
 module.exports = {
-
-  /**
-   * 编译打包配置
-   * @type {Object}
-   */
-  build: require('./build'),
 
   /**
    * 项目
@@ -24,7 +18,7 @@ module.exports = {
      * 项目包含的文件
      * @type {Array}
      */
-    include: [],
+    include: null,
 
     /**
      * 例外
@@ -32,8 +26,20 @@ module.exports = {
      */
     exclude: [
       // git data
-      /\/.git/
+      /^\/\.git/
     ],
+
+
+    /**
+     * 资源监控
+     * @type {Object}
+     */
+    watch: {
+
+      usePolling: false,
+
+      exclude: []
+    }
   },
 
 
@@ -94,6 +100,16 @@ module.exports = {
   modules: {
 
     /**
+     * 构建
+     */
+    build: {
+      // 将js组件通过tomoko-build-js打包
+      js: 'js',
+      // 将less组件通过tomoko-build-less打包
+      less: 'less'
+    },
+
+    /**
      * 解析
      * @type {Object}
      */
@@ -111,7 +127,7 @@ module.exports = {
      */
     postprocessor: {
       // 将js文件中的commonjs格式 转换为seajs
-      js: 'cmdwrap'
+      // js: 'cmdwrap'
     }
   },
 
