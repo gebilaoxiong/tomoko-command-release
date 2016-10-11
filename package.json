@@ -1,6 +1,6 @@
 {
   "name": "tomoko-command-release",
-  "version": "0.0.1",
+  "version": "0.0.28",
   "description": "release 命令",
   "main": "release.js",
   "scripts": {
